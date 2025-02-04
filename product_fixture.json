@@ -1,0 +1,41 @@
+[
+{
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+        "name": "product1",
+        "descriptions": "test 1234 test test product1",
+        "img": "",
+        "category": 1,
+        "price": 123,
+        "created_at": "2025-02-04",
+        "updated_at": "2025-02-04"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+        "name": "product3",
+        "descriptions": "test 4321 test product3",
+        "img": "",
+        "category": 2,
+        "price": 3000,
+        "created_at": "2025-02-04",
+        "updated_at": "2025-02-04"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 5,
+    "fields": {
+        "name": "product1",
+        "descriptions": "test 1234 test test product1",
+        "img": "",
+        "category": 1,
+        "price": 123,
+        "created_at": "2025-02-04",
+        "updated_at": "2025-02-04"
+    }
+}
+]

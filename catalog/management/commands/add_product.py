@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from catalog.models import Product, Category
 from django.db import transaction
+from django.core.management import call_command
 
 
 class Command(BaseCommand):
@@ -11,6 +12,7 @@ class Command(BaseCommand):
             Category.objects.all().delete()
             Product.objects.all().delete()
 
+            call_command('loaddata', 'fixutres.json')
             category, _ = Category.objects.get_or_create(name='category1')
 
             products = [

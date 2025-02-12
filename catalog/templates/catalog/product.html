@@ -1,3 +1,21 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ product.name }}</h1>
+<ul>
+    <div class="card">
+        <div class="card-body">
+            <li class="list-group-item">Название товара: {{ product.name }}</li>
+            <li class="list-group-item">Категория товара: {{ product.category }}</li>
+            <li class="list-group-item">Описание товара: {{ product.descriptions|truncatechars:100 }}</li>
+            <li class="list-group-item">Цена товара: {{ product.price }}</li>
+        </div>
+    </div>
+</ul>
+{% endblock %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

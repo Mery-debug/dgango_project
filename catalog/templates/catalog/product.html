@@ -14,28 +14,6 @@
         </div>
     </div>
 </ul>
+{% include "catalog/floor.html" %}
 {% endblock %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.name }}</title>
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="mb-4">{{ product.name }}</h1>
-        <div class="card">
-            <div class="card-body">
-                <li class="list-group-item">Название товара: {{ product.name }}</li>
-                <li class="list-group-item">Категория товара: {{ product.category }}</li>
-                <li class="list-group-item">Описание товара: {{ product.descriptions|truncatechars:100 }}</li>
-                <li class="list-group-item">Цена товара: {{ product.price }}</li>
-            </div>
-        </div>
-    </div>
-    <script src="/static/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

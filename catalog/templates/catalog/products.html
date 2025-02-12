@@ -2,7 +2,10 @@
 
 {% block title %}Каталог{% endblock %}
 
+{% include "catalog/header.html" %}
+
 {% block content %}
+
 <h1 class="mb-4">Список товаров</h1>
 <ul>
     {% for product in products %}
@@ -15,4 +18,5 @@
     </div>
     {% endfor %}
 </ul>
+{% include "catalog/floor.html" %}
 {% endblock %}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог</title>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Список товаров</h1>
+    <ul class="list-group">
+        {% for product in products %}
+            <li>Название товара: {{ product.name }}</li>
+            <p>Категория товара: {{ product.category }}</p>
+            <p>Описание товара: {{ product.descriptions | truncatechars:100 }}</p>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

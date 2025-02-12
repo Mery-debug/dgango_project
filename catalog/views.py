@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from django.shortcuts import render
 
-from catalog.models import Product
+from .models import Product
 
 
 def catalog_view_home(request):

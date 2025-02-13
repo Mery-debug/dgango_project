@@ -17,7 +17,7 @@ def product_list(request):
     return render(request, 'catalog/products.html', context)
 
 
-def product_detail(request, product_id):
+def product_detail(request, product_id=Product.id):
     product = Product.objects.get(id=product_id)
     context = {'product': product}
     return render(request, 'catalog/product.html', context)

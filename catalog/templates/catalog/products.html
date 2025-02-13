@@ -11,7 +11,10 @@
     {% for product in products %}
     <div class="card">
         <div class="card-body">
-            <li class="list-group-item">Название товара: {{ product.name }}</li>
+            <li class="list-group-item">
+                Название товара:
+                <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+            </li>
             <li class="list-group-item">Категория товара: {{ product.category }}</li>
             <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
         </div>

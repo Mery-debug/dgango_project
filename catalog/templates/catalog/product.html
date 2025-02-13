@@ -7,6 +7,7 @@
 <ul>
     <div class="card">
         <div class="card-body">
+            <img src="../../media/{{ product.img }}" class="card-img-top w-25" alt="404 not found">
             <li class="list-group-item">Название товара: {{ product.name }}</li>
             <li class="list-group-item">Категория товара: {{ product.category }}</li>
             <li class="list-group-item">Описание товара: {{ product.descriptions|truncatechars:100 }}</li>

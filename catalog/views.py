@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Product
 
@@ -18,7 +18,7 @@ def product_list(request):
 
 
 def product_detail(request, product_id=Product.id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, pk=product_id)
     context = {'product': product}
     return render(request, 'catalog/product.html', context)
 

@@ -1,0 +1,20 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ product.name }}</h1>
+<ul>
+    <div class="card">
+        <div class="card-body">
+            <img src="{{ product.img.url }}" class="card-img-top w-25" alt="404 not found">
+            <li class="list-group-item">Название товара: {{ product.name }}</li>
+            <li class="list-group-item">Категория товара: {{ product.category }}</li>
+            <li class="list-group-item">Описание товара: {{ product.descriptions }}</li>
+            <li class="list-group-item">Цена товара: {{ product.price }}</li>
+        </div>
+    </div>
+</ul>
+{% include "catalog/floor.html" %}
+{% endblock %}
+

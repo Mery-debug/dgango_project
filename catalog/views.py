@@ -1,5 +1,6 @@
-from django.shortcuts import render
-# from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+
+from .models import Product
 
 
 def catalog_view_home(request):
@@ -10,10 +11,14 @@ def catalog_view_contacts(request):
     return render(request, 'catalog/contacts.html')
 
 
-# def contact(request):
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         phone = request.POST.get('phone')
-#         message = request.POST.get('message')
-#         return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
-#     return render(request, 'students/contact.html')
+def product_list(request):
+    products = Product.objects.all()
+    context = {'products': products}
+    return render(request, 'catalog/products.html', context)
+
+
+def product_detail(request, product_id=Product.id):
+    product = get_object_or_404(Product, pk=product_id)
+    context = {'product': product}
+    return render(request, 'catalog/product.html', context)
+

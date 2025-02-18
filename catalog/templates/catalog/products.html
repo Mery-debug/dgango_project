@@ -1,0 +1,25 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Каталог{% endblock %}
+
+{% include "catalog/header.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">Список товаров</h1>
+<ul>
+    {% for product in products %}
+    <div class="card">
+        <div class="card-body">
+            <li class="list-group-item">
+                Название товара:
+                <a href="{% url 'catalog:product_detail' product.pk %}">{{ product.name }}</a>
+            </li>
+            <li class="list-group-item">Категория товара: {{ product.category }}</li>
+            <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% include "catalog/floor.html" %}
+{% endblock %}

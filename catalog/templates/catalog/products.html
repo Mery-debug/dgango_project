@@ -7,7 +7,9 @@
 {% block content %}
 
 <h1 class="mb-4">Список товаров</h1>
+
 <ul>
+    <a class="btn btn-dark" href="{% url 'catalog:product_create' %}">Добавить товар</a>
     {% for product in products %}
     <div class="card">
         <div class="card-body">

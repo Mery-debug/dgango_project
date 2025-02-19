@@ -1,7 +1,6 @@
-from django.shortcuts import render, get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, View, DeleteView
 from django.views.generic import ListView, DetailView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from .models import Product
 
 
@@ -19,32 +18,32 @@ class CatalogViewList(ListView):
     model = Product
     context_object_name = 'products'
     template_name = 'catalog/products.html'
-    success_url = reverse_lazy('product_list')
+    success_url = reverse_lazy('product_list/')
 
 
 class CatalogViewDetail(DetailView):
-    model = get_object_or_404(Product, pk=Product.id)
+    model = Product
     context_object_name = 'product'
     template_name = 'catalog/product.html'
-    success_url = reverse_lazy('product_details')
+    success_url = reverse_lazy('product_details/')
 
 
 class CatalogCreateView(CreateView):
     model = Product
-    fields = ['id', 'name', 'description', 'category', 'price', 'img']
+    fields = ['id', 'name', 'descriptions', 'category', 'price']
     template_name = 'catalog/create.html'
-    success_url = reverse_lazy('product_create')
+    success_url = reverse_lazy('product_list/')
 
 
 class CatalogUpdateView(UpdateView):
-    model = get_object_or_404(Product, pk=Product.id)
+    model = Product
     fields = ['name', 'description', 'category', 'price', 'img']
     template_name = 'catalog/update.html'
-    success_url = reverse_lazy('product_update')
+    success_url = reverse_lazy('product/<int:pk>/edit/')
 
 
 class CatalogDeleteView(DeleteView):
-    model = get_object_or_404(Product, pk=Product.id)
+    model = Product
     template_name = 'catalog/confirm_delete.html'
-    success_url = reverse_lazy('product_list')
+    success_url = reverse_lazy('product_list/')
 

@@ -37,14 +37,14 @@ class CatalogCreateView(CreateView):
 
 
 class CatalogUpdateView(UpdateView):
-    model = Product
+    model = get_object_or_404(Product, pk=Product.id)
     fields = ['name', 'description', 'category', 'price', 'img']
     template_name = 'catalog/update.html'
     success_url = reverse_lazy('product_update')
 
 
 class CatalogDeleteView(DeleteView):
-    model = Product
+    model = get_object_or_404(Product, pk=Product.id)
     template_name = 'catalog/confirm_delete.html'
     success_url = reverse_lazy('product_list')
 

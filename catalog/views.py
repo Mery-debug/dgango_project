@@ -37,4 +37,14 @@ class CatalogCreateView(CreateView):
 
 
 class CatalogUpdateView(UpdateView):
-    pass
+    model = Product
+    fields = ['name', 'description', 'category', 'price', 'img']
+    template_name = 'catalog/update.html'
+    success_url = reverse_lazy('product_update')
+
+
+class CatalogDeleteView(DeleteView):
+    model = Product
+    template_name = 'catalog/confirm_delete.html'
+    success_url = reverse_lazy('product_list')
+

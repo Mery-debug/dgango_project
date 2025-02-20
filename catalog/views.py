@@ -44,6 +44,7 @@ class CatalogViewDetail(DetailView):
         else:
             return None
 
+
 class CatalogCreateView(CreateView):
     model = Product
     fields = ['id', 'name', 'descriptions', 'category', 'price', 'img']

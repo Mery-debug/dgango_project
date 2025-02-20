@@ -22,9 +22,11 @@ from django.conf.urls.static import static
 
 app_name = 'catalog'
 
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("catalog/", include('catalog.urls', namespace='catalog')),
+    path("spam/", include('spam.urls', namespace='spam')),
 ]
 
 if settings.DEBUG:

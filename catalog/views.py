@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, View, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
@@ -8,16 +9,22 @@ class CatalogHomeView(View):
     template_name = 'catalog/home.html'
     success_url = reverse_lazy('home')
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
 
 class CatalogContactsView(View):
     template_name = 'catalog/contacts.html'
     success_url = reverse_lazy('contacts')
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
 
 class CatalogViewList(ListView):
     model = Product
     context_object_name = 'products'
-    template_name = 'catalog/content.html'
+    template_name = 'catalog/products.html'
     success_url = reverse_lazy('product_list')
 
     def get_queryset(self):
@@ -27,7 +34,7 @@ class CatalogViewList(ListView):
 class CatalogViewDetail(DetailView):
     model = Product
     context_object_name = 'product'
-    template_name = 'catalog/contents.html'
+    template_name = 'catalog/product.html'
     success_url = reverse_lazy('product_details')
 
     def get_context_data(self, **kwargs):

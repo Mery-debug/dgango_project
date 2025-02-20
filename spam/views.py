@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
@@ -7,9 +8,9 @@ from django.views import View
 
 class SpamListView(ListView):
     model = Spam
-    context_object_name = 'spam'
-    template_name = 'spam/.html'
-    success_url = reverse_lazy('home')
+    context_object_name = 'spams'
+    template_name = 'spam/contents.html'
+    success_url = reverse_lazy('spam_list')
 
     def get_queryset(self):
         return Spam.objects.filter(is_active=True)
@@ -17,8 +18,8 @@ class SpamListView(ListView):
 
 class SpamDetailView(DetailView):
     model = Spam
-    context_object_name = 'content'
-    template_name = 'spam/page.html'
+    context_object_name = 'spam'
+    template_name = 'spam/content.html'
     success_url = reverse_lazy('spam_details')
 
     def get_object(self, queryset=None):
@@ -33,16 +34,19 @@ class SpamDetailView(DetailView):
 
 class SpamCreateView(CreateView):
     model = Spam
-    fields = ['name', 'content', 'img']
+    fields = ['id', 'name', 'content', 'img']
     template_name = 'spam/create.html'
-    success_url = reverse_lazy('spam:home')
+    success_url = reverse_lazy('spam:spam_list')
 
 
 class SpamUpdateView(UpdateView):
     model = Spam
     fields = ['name', 'content', 'img']
     template_name = 'spam/update.html'
-    success_url = reverse_lazy('spam:home')
+    success_url = reverse_lazy('spam/<int:pk>/edit/')
+
+    def get_success_url(self):
+        return reverse_lazy('', kwargs={'pk': self.object.pk})
 
 
 class SpamDeleteView(DeleteView):
@@ -55,4 +59,6 @@ class SpamHomeView(View):
     template_name = 'spam/home.html'
     success_url = reverse_lazy('home')
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
 

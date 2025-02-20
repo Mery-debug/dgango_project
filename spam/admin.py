@@ -1,16 +1,10 @@
 from django.contrib import admin
-from catalog.models import Category, Product
+from .models import Spam
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+@admin.register(Spam)
+class SpamAdmin(admin.ModelAdmin):
+    list_display = ('name', 'content')
     list_filter = ('name',)
     search_fields = ('name',)
 
-
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'price', 'category')
-    list_filter = ('name',)
-    search_fields = ('name', 'price',)

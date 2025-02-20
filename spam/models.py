@@ -9,3 +9,11 @@ class Spam(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.name} {self.content}'
+
+    class Meta:
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщения'
+        ordering = ['name']

@@ -1,14 +1,18 @@
-from django.views.generic.edit import CreateView, UpdateView, View, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
-from .models import Spam
+from spam.models import Spam
+from django.views import View
 
 
 class SpamListView(ListView):
     model = Spam
     context_object_name = 'spam'
-    template_name = 'spam/home.html'
+    template_name = 'spam/.html'
     success_url = reverse_lazy('home')
+
+    def get_queryset(self):
+        return Spam.objects.filter(is_active=True)
 
 
 class SpamDetailView(DetailView):
@@ -45,4 +49,10 @@ class SpamDeleteView(DeleteView):
     model = Spam
     template_name = 'spam/confirm_delete.html'
     success_url = reverse_lazy('spam:spam_list')
+
+
+class SpamHomeView(View):
+    template_name = 'spam/home.html'
+    success_url = reverse_lazy('home')
+
 

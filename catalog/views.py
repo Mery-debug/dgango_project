@@ -17,7 +17,7 @@ class CatalogContactsView(View):
 class CatalogViewList(ListView):
     model = Product
     context_object_name = 'products'
-    template_name = 'catalog/products.html'
+    template_name = 'catalog/content.html'
     success_url = reverse_lazy('product_list')
 
     def get_queryset(self):
@@ -27,7 +27,7 @@ class CatalogViewList(ListView):
 class CatalogViewDetail(DetailView):
     model = Product
     context_object_name = 'product'
-    template_name = 'catalog/product.html'
+    template_name = 'catalog/contents.html'
     success_url = reverse_lazy('product_details')
 
     def get_context_data(self, **kwargs):

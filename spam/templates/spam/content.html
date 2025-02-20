@@ -1,0 +1,27 @@
+{% extends 'spam/base.html' %}
+
+{% block title %}Список статей{% endblock %}
+
+{% include "spam/header.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">Список статей</h1>
+
+<ul>
+    <a class="btn btn-dark" href="{% url 'spam:content_create' %}">Добавить статью</a>
+    {% for spam in spams %}
+    <div class="card">
+        <div class="card-body">
+            <li class="list-group-item">
+                Название статьи:
+                <a href="{% url 'spam:spam_detail' spam.pk %}">{{ spam.name }}</a>
+            </li>
+            <li class="list-group-item">Категория товара: {{ spam.content }}</li>
+            <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% include "spam/floor.html" %}
+{% endblock %}

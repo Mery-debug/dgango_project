@@ -29,7 +29,7 @@ class SpamDetailView(DetailView):
             obj.save()
             return obj
         else:
-            return None
+            return obj
 
 
 class SpamCreateView(CreateView):
@@ -43,10 +43,10 @@ class SpamUpdateView(UpdateView):
     model = Spam
     fields = ['name', 'content', 'img']
     template_name = 'spam/update.html'
-    success_url = reverse_lazy('spam/<int:pk>/edit/')
+    success_url = reverse_lazy('spam:spam_detail')
 
     def get_success_url(self):
-        return reverse_lazy('', kwargs={'pk': self.object.pk})
+        return reverse_lazy('spam:spam_detail', kwargs={'pk': self.object.pk})
 
 
 class SpamDeleteView(DeleteView):

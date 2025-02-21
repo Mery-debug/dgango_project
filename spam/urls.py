@@ -6,8 +6,7 @@ app_name = 'spam'
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path('home/', SpamHomeView.as_view(), name='home'),
+    path('', SpamHomeView.as_view(), name='home'),
     path('spam_list/', SpamListView.as_view(), name='spam_list'),
     path('spam_detail/<int:pk>/', SpamDetailView.as_view(), name='spam_detail'),
     path('create/', SpamCreateView.as_view(), name='create'),

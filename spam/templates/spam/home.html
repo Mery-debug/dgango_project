@@ -12,19 +12,35 @@
 
 <div class="container">
     <div class="row text-center">
-        <div class="col-3">
-            <div class="card mb-4 box-shadow">
-                <div class="card-header">
-                    <h4 class="my-0 font-weight-normal">Удобный сервис для поиска и размещения сообщений</h4>
-                </div>
-                <div class="card-body">
-                    <a href="{% url 'spam:create' %}" class="btn btn-lg btn-block btn-outline-primary">
-                        написать
-                    </a>
+        <div class="col-8">
+            <div class="col-sm-4 w-30">
+                <div class="card mb-4 box-shadow ">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Удобный сервис для поиска и размещения сообщений</h4>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'spam:create' %}" class="btn btn-lg btn-block btn-outline-primary">
+                            написать
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="col-8">
+            <div class="col-sm-4 w-30">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Удобный сервис для покупки товаров</h4>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'catalog:product_create' %}" class="btn btn-lg btn-block btn-outline-primary">
+                            добавить товар
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
 </div>
 </ul>
 {% include "spam/floor.html" %}

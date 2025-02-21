@@ -36,7 +36,10 @@ class SpamCreateView(CreateView):
     model = Spam
     fields = ['id', 'name', 'content', 'img']
     template_name = 'spam/create.html'
-    success_url = reverse_lazy('spam:spam_list')
+    success_url = reverse_lazy('spam:spam_detail')
+
+    def get_success_url(self):
+        return reverse_lazy('spam:spam_detail', kwargs={'pk': self.object.pk})
 
 
 class SpamUpdateView(UpdateView):

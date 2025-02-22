@@ -10,7 +10,7 @@
             {% if spam.img %}
                 <img src="{{ spam.img.url }}" class="card-img-top w-25" alt="404 not found">
             {% else %}
-                <p>Изображение недоступно</p>
+                <img src="{{ spam.img.default }}" class="card-img-top w-25">
             {% endif %}
             <li class="list-group-item">Название статьи: {{ spam.name }}</li>
             <li class="list-group-item">Текст статьи: {{ spam.content }}</li>

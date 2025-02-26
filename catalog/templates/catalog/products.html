@@ -10,18 +10,22 @@
 
 <ul>
     <a class="btn btn-dark" href="{% url 'catalog:product_create' %}">Добавить товар</a>
-    {% for product in products %}
-    <div class="card">
-        <div class="card-body">
-            <li class="list-group-item">
-                Название товара:
-                <a href="{% url 'catalog:product_detail' product.pk %}">{{ product.name }}</a>
-            </li>
-            <li class="list-group-item">Категория товара: {{ product.category }}</li>
-            <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% for product in products %}
+        <div class="card">
+            <div class="card-body">
+                <li class="list-group-item">
+                    Название товара:
+                    <a href="{% url 'catalog:product_detail' product.pk %}">{{ product.name }}</a>
+                </li>
+                <li class="list-group-item">Категория товара: {{ product.category }}</li>
+                <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+            </div>
         </div>
-    </div>
-    {% endfor %}
+        {% empty %}
+        <li>Нет доступных продуктов.</li>
+        {% endfor %}
 </ul>
 {% include "catalog/floor.html" %}
 {% endblock %}

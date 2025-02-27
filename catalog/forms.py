@@ -25,7 +25,7 @@ class ProductForm(forms.ModelForm):
         for field_name in self.fields:
             self.fields[field_name].widget.attrs.update({
                 'class': 'form-control',
-                'placeholder': f'Введите {self.fields[field_name].label}'
+                'placeholder': f'Введите {self.fields[field_name].label.lower()}'
             })
 
     def clean_name(self):
@@ -33,19 +33,18 @@ class ProductForm(forms.ModelForm):
         load_dotenv()
         lst_exception = os.getenv('LST_EXCEPTION')
         for lst in lst_exception:
-            if lst in name:
+            if lst in name.lower():
                 raise ValidationError('Вы ввели запрещенное слово')
-            return name
+        return name
 
     def clean_descriptions(self):
         descriptions = self.cleaned_data.get('descriptions')
         load_dotenv()
         lst_exception = os.getenv('LST_EXCEPTION')
         for lst in lst_exception:
-            for desc in descriptions:
-                if lst == desc.lower():
-                    raise ValidationError('Вы ввели запрещенное слово')
-            return descriptions
+            if lst in descriptions.lower():
+                raise ValidationError('Вы ввели запрещенное слово')
+        return descriptions
 
     def clean_price(self):
         price = self.cleaned_data.get('price')

@@ -66,12 +66,14 @@ class CatalogUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/update.html'
-    success_url = reverse_lazy('product/<int:pk>/edit/')
+    success_url = reverse_lazy('catalog:product_detail')
+
+    def get_success_url(self):
+        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
 
 
 class CatalogDeleteView(DeleteView):
     model = Product
-    form_class = ProductForm
     template_name = 'catalog/confirm_delete.html'
     success_url = reverse_lazy('catalog:product_list')
 

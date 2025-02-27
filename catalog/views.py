@@ -40,6 +40,9 @@ class CatalogViewDetail(DetailView):
     template_name = 'catalog/product.html'
     success_url = reverse_lazy('product_details')
 
+    def get_success_url(self):
+        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['product'].img = getattr(context['product'], 'img', None)
@@ -59,7 +62,10 @@ class CatalogCreateView(CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/create.html'
-    success_url = reverse_lazy('catalog:product_list')
+    success_url = reverse_lazy('catalog:product_detail')
+
+    def get_success_url(self):
+        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
 
 
 class CatalogUpdateView(UpdateView):

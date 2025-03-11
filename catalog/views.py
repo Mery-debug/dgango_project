@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, View, DeleteView
 from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
+
+from .forms import ProductForm
 from .models import Product
 
 
@@ -23,6 +25,7 @@ class CatalogContactsView(View):
 
 class CatalogViewList(ListView):
     model = Product
+    form_class = ProductForm
     context_object_name = 'products'
     template_name = 'catalog/products.html'
     success_url = reverse_lazy('product_list')
@@ -33,9 +36,12 @@ class CatalogViewList(ListView):
 
 class CatalogViewDetail(DetailView):
     model = Product
-    context_object_name = 'product'
+    form_class = ProductForm
     template_name = 'catalog/product.html'
     success_url = reverse_lazy('product_details')
+
+    def get_success_url(self):
+        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -54,16 +60,22 @@ class CatalogViewDetail(DetailView):
 
 class CatalogCreateView(CreateView):
     model = Product
-    fields = ['id', 'name', 'descriptions', 'category', 'price', 'img']
+    form_class = ProductForm
     template_name = 'catalog/create.html'
-    success_url = reverse_lazy('catalog:product_list')
+    success_url = reverse_lazy('catalog:product_detail')
+
+    def get_success_url(self):
+        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
 
 
 class CatalogUpdateView(UpdateView):
     model = Product
-    fields = ['name', 'descriptions', 'category', 'price', 'img']
+    form_class = ProductForm
     template_name = 'catalog/update.html'
-    success_url = reverse_lazy('product/<int:pk>/edit/')
+    success_url = reverse_lazy('catalog:product_detail')
+
+    def get_success_url(self):
+        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
 
 
 class CatalogDeleteView(DeleteView):

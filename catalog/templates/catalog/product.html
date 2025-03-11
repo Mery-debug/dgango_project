@@ -7,6 +7,8 @@
 <ul>
     <div class="card">
         <div class="card-body">
+            {% csrf_token %}
+            {{ form.as_p }}
             {% if product.img %}
                 <img src="{{ product.img.url }}" class="card-img-top w-25" alt="404 not found">
             {% else %}

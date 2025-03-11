@@ -10,7 +10,7 @@ class Auth(AbstractUser):
     phone_number = models.IntegerField(null=True, blank=True, help_text='Номер должен содержать только цифры')
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username',]
 
     def __str__(self):
         return self.email

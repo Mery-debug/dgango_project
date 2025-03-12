@@ -4,10 +4,10 @@ from .models import Auth
 
 
 class AuthForm(UserCreationForm):
-    username = forms.CharField(max_length=15, required=False, verbose_name='Имя пользователя')
-    email = forms.EmailField(required=True, verbose_name='Адрес почты')
-    img = forms.ImageField(required=False, verbose_name='Изображение')
-    country = forms.CharField(required=False, verbose_name='Страна')
+    username = forms.CharField(max_length=15, required=False, help_text='Имя пользователя')
+    email = forms.EmailField(required=True, help_text='Адрес почты')
+    img = forms.ImageField(required=False, help_text='Изображение')
+    country = forms.CharField(required=False, help_text='Страна')
     phone_number = forms.IntegerField(required=False, help_text='Номер должен содержать только цифры')
 
     class Meta:

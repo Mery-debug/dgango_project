@@ -6,9 +6,20 @@
       <a class="p-2 btn btn-outline-primary" href="/spam/spam_list/">Список статей</a>
       <a class="p-2 btn btn-outline-primary" href="/catalog/product_list/">Каталог</a>
       {% if user.is_authenticated %}
-        <p>Добро пожаловать, {{ user.first_name or user.email }}!</p>
+        <p>Добро пожаловать, {{ user.first_name }}!</p>
+        <form method="post" action="{% url 'authorization:logout' %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-link nav-link">Выйти
+          </button>
+        </form>
       {% else %}
         <p>Добро пожаловать в каталог продуктов!</p>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Войти</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+        </li>
       {% endif %}
     </nav>
   </div>

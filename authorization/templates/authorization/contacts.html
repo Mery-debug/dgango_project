@@ -1,0 +1,17 @@
+{% extends 'authorization/base.html' %}
+
+{% block title %}Каталог{% endblock %}
+
+{% include "authorization/header.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">Контакты</h1>
+
+<div class="row text-start">
+        {% include "authorization/form_adres.html" %}
+        {% include "authorization/form_connection.html" %}
+        {% include "authorization/floor.html" %}
+</div>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

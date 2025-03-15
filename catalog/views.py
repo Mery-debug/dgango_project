@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, View, DeleteView
 from django.views.generic import ListView, DetailView
@@ -58,7 +59,7 @@ class CatalogViewDetail(DetailView):
             return None
 
 
-class CatalogCreateView(CreateView):
+class CatalogCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'authorization/create_spam.html'
@@ -68,7 +69,7 @@ class CatalogCreateView(CreateView):
         return reverse_lazy('authorization:product_detail', kwargs={'pk': self.object.pk})
 
 
-class CatalogUpdateView(UpdateView):
+class CatalogUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'authorization/update_spam.html'
@@ -78,7 +79,7 @@ class CatalogUpdateView(UpdateView):
         return reverse_lazy('authorization:product_detail', kwargs={'pk': self.object.pk})
 
 
-class CatalogDeleteView(DeleteView):
+class CatalogDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = 'authorization/confirm_delete.html'
     success_url = reverse_lazy('authorization:product_list')

@@ -1,15 +1,16 @@
-{% extends 'catalog/base.html' %}
+{% extends 'authorization/base.html' %}
 
 {% block title %}Каталог{% endblock %}
-
-{% include "catalog/header.html" %}
 
 {% block content %}
 
 <h1 class="mb-4">Список товаров</h1>
 
 <ul>
-    <a class="btn btn-dark" href="{% url 'catalog:product_create' %}">Добавить товар</a>
+  {% if user.is_active %}
+    <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
+  {% else %}
+  {% endif %}
         {% csrf_token %}
         {{ form.as_p }}
         {% for product in products %}
@@ -17,7 +18,7 @@
             <div class="card-body">
                 <li class="list-group-item">
                     Название товара:
-                    <a href="{% url 'catalog:product_detail' product.pk %}">{{ product.name }}</a>
+                    <a href="{% url 'authorization:product_detail' product.pk %}">{{ product.name }}</a>
                 </li>
                 <li class="list-group-item">Категория товара: {{ product.category }}</li>
                 <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
@@ -27,5 +28,5 @@
         <li>Нет доступных продуктов.</li>
         {% endfor %}
 </ul>
-{% include "catalog/floor.html" %}
+{% include "authorization/floor.html" %}
 {% endblock %}

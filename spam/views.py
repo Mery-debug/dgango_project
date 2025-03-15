@@ -9,7 +9,7 @@ from django.views import View
 class SpamListView(ListView):
     model = Spam
     context_object_name = 'spams'
-    template_name = 'spam/contents.html'
+    template_name = 'authorization/contents.html'
     success_url = reverse_lazy('spam_list')
 
     def get_queryset(self):
@@ -19,7 +19,7 @@ class SpamListView(ListView):
 class SpamDetailView(DetailView):
     model = Spam
     context_object_name = 'spam'
-    template_name = 'spam/content.html'
+    template_name = 'authorization/content.html'
     success_url = reverse_lazy('spam_details')
 
     def get_object(self, queryset=None):
@@ -35,7 +35,7 @@ class SpamDetailView(DetailView):
 class SpamCreateView(CreateView):
     model = Spam
     fields = ['id', 'name', 'content', 'img']
-    template_name = 'spam/create.html'
+    template_name = 'authorization/create_spam.html'
     success_url = reverse_lazy('spam:spam_detail')
 
     def get_success_url(self):
@@ -45,7 +45,7 @@ class SpamCreateView(CreateView):
 class SpamUpdateView(UpdateView):
     model = Spam
     fields = ['name', 'content', 'img']
-    template_name = 'spam/update.html'
+    template_name = 'authorization/update_spam.html'
     success_url = reverse_lazy('spam:spam_detail')
 
     def get_success_url(self):
@@ -54,7 +54,7 @@ class SpamUpdateView(UpdateView):
 
 class SpamDeleteView(DeleteView):
     model = Spam
-    template_name = 'spam/confirm_delete.html'
+    template_name = 'authorization/confirm_delete.html'
     success_url = reverse_lazy('spam:spam_list')
 
 

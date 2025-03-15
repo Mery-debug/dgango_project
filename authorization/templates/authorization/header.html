@@ -3,23 +3,18 @@
     <h5 class="my-0 mr-md-auto font-weight-normal">Список статей</h5>
     <nav class="ms-5">
       <a class="p-2 btn btn-outline-primary" href="/">На главную</a>
-      <a class="p-2 btn btn-outline-primary" href="/spam/spam_list/">Список статей</a>
-      <a class="p-2 btn btn-outline-primary" href="/catalog/product_list/">Каталог</a>
-      {% if user.is_authenticated %}
-        <p>Добро пожаловать, {{ user.first_name }}!</p>
+      <a class="p-2 btn btn-outline-primary" href="/authorization/spam_list/">Список статей</a>
+      <a class="p-2 btn btn-outline-primary" href="/authorization/product_list/">Каталог</a>
+      {% if user.is_active %}
         <form method="post" action="{% url 'authorization:logout' %}" style="display: inline;">
           {% csrf_token %}
-          <button type="submit" class="btn btn-link nav-link">Выйти
-          </button>
+          <a href="/authorization/product_list/"><button class="p-2 btn btn-outline-primary" type="submit">Выйти</button></a>
+          <p>Добро пожаловать, {{ user.first_name }}!</p>
         </form>
       {% else %}
+        <a href="{% url 'authorization:login' %}"><button class="p-2 btn btn-outline-primary" type="submit">Войти</button></a>
+        <a href="{% url 'authorization:register' %}"><button class="p-2 btn btn-outline-primary" type="submit">Регистрация</button></a>
         <p>Добро пожаловать в каталог продуктов!</p>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Войти</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
-        </li>
       {% endif %}
     </nav>
   </div>

@@ -1,0 +1,35 @@
+{% extends 'authorization/base.html' %}
+
+{% block title %}Список статей{% endblock %}
+
+{% include "authorization/header.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">Список статей</h1>
+
+<ul>
+    {% if user.is_active %}
+    <a class="btn btn-dark" href="{% url 'spam:create' %}">Добавить статью</a>
+    {% else %}
+
+    {% endif %}
+    {% for spam in spams %}
+    <div class="card">
+        <div class="card-body">
+            <li class="list-group-item">
+                Название статьи:
+                <a href="{% url 'spam:spam_detail' spam.pk %}">{{ spam.name }}</a>
+            </li>
+            <li class="list-group-item">Текст статьи: {{ spam.content }}</li>
+            {% if user.is_active %}
+            <a href="{% url 'spam:update' spam.pk %}" class="btn btn-secondary">Редактировать</a>
+            <a href="{% url 'spam:delete' spam.pk %}" class="btn btn-danger">Удалить</a>
+            {% else %}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% include "authorization/floor.html" %}
+{% endblock %}

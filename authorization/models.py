@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse_lazy, reverse
 
 
 class Auth(AbstractUser):
@@ -10,8 +11,12 @@ class Auth(AbstractUser):
     phone_number = models.IntegerField(null=True, blank=True, help_text='Номер должен содержать только цифры')
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username',]
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.email
+
+    def get_absolute_url(self):
+        self.is_active = True
+        return reverse('authorization:home')
 

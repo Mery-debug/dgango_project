@@ -27,8 +27,8 @@ class CatalogViewList(ListView):
     model = Product
     form_class = ProductForm
     context_object_name = 'products'
-    template_name = 'catalog/products.html'
-    success_url = reverse_lazy('product_list')
+    template_name = 'authorization/products.html'
+    success_url = reverse_lazy('authorization:product_list')
 
     def get_queryset(self):
         return Product.objects.filter(is_active=True)
@@ -37,11 +37,11 @@ class CatalogViewList(ListView):
 class CatalogViewDetail(DetailView):
     model = Product
     form_class = ProductForm
-    template_name = 'catalog/product.html'
+    template_name = 'authorization/product.html'
     success_url = reverse_lazy('product_details')
 
     def get_success_url(self):
-        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('authorization:product_detail', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -61,25 +61,25 @@ class CatalogViewDetail(DetailView):
 class CatalogCreateView(CreateView):
     model = Product
     form_class = ProductForm
-    template_name = 'catalog/create.html'
-    success_url = reverse_lazy('catalog:product_detail')
+    template_name = 'authorization/create_spam.html'
+    success_url = reverse_lazy('authorization:product_detail')
 
     def get_success_url(self):
-        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('authorization:product_detail', kwargs={'pk': self.object.pk})
 
 
 class CatalogUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
-    template_name = 'catalog/update.html'
-    success_url = reverse_lazy('catalog:product_detail')
+    template_name = 'authorization/update_spam.html'
+    success_url = reverse_lazy('authorization:product_detail')
 
     def get_success_url(self):
-        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('authorization:product_detail', kwargs={'pk': self.object.pk})
 
 
 class CatalogDeleteView(DeleteView):
     model = Product
-    template_name = 'catalog/confirm_delete.html'
-    success_url = reverse_lazy('catalog:product_list')
+    template_name = 'authorization/confirm_delete.html'
+    success_url = reverse_lazy('authorization:product_list')
 

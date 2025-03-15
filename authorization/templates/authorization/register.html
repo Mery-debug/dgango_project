@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "authorization/base.html" %}
 
-</body>
-</html>
+{% block content %}
+  <h2>Регистрация</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <a href="{% url 'authorization:home' %}"><button type="submit">Зарегистрироваться</button></a>
+  </form>
+{% endblock %}

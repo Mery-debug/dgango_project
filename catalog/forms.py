@@ -6,13 +6,15 @@ from .models import Product, Category
 from django.core.exceptions import ValidationError
 from dotenv import load_dotenv
 
-load_dotenv()  # Загрузить переменные окружения один раз
+
+load_dotenv()
+
 
 class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
         self.update_field_attributes()
-        self.lst_exception = os.getenv('LST_EXCEPTION').split(',')  # загрузите в список
+        self.lst_exception = os.getenv('LST_EXCEPTION').split(',')
 
     class Meta:
         model = Product

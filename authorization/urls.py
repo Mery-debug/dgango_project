@@ -3,7 +3,7 @@ from django.urls import path
 
 from catalog.views import CatalogViewList, CatalogViewDetail, CatalogCreateView, CatalogUpdateView, CatalogDeleteView
 from spam.views import SpamUpdateView, SpamListView, SpamDetailView, SpamCreateView, SpamDeleteView
-from .views import AuthHome, AuthRegister
+from .views import AuthHome, AuthRegister, CustomLogoutView
 from django.contrib.auth.views import LoginView, LogoutView
 
 app_name = 'authorization'
@@ -11,13 +11,14 @@ app_name = 'authorization'
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('logout/', LogoutView.as_view(next_page='authorization:home'), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='authorization:goodbye'), name='logout'),
+    path('goodbye/', CustomLogoutView.as_view(template_name='authorization/goodbye.html'), name='goodbye'),
     path('login/', LoginView.as_view(template_name='authorization/login.html', next_page='authorization:home'), name='login'),
     path('register/', AuthRegister.as_view(template_name='authorization/register.html'), name='register'),
     path('product_list/', CatalogViewList.as_view(template_name='authorization/products.html'), name='product_list'),
     path('product_detail/<int:pk>/', CatalogViewDetail.as_view(template_name='authorization/product.html'), name='product_detail'),
-    path('product/new/', CatalogCreateView.as_view(template_name='authorization/create_spam.html'), name='product_create'),
-    path('product/<int:pk>/edit/', CatalogUpdateView.as_view(template_name='authorization/update_spam.html'), name='product_edit'),
+    path('product/new/', CatalogCreateView.as_view(template_name='authorization/create_product.html'), name='product_create'),
+    path('product/<int:pk>/edit/', CatalogUpdateView.as_view(template_name='authorization/update_product.html'), name='product_edit'),
     path('product/<int:pk>/delete/', CatalogDeleteView.as_view(template_name='catalog/confirm_delete.html'), name='product_delete'),
     path('spam_detail/<int:pk>/update/', SpamUpdateView.as_view(template_name='authorization/update_spam.html'), name='update'),
     path('spam_list/', SpamListView.as_view(template_name='authorization/contents.html'), name='spam_list'),

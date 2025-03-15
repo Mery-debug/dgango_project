@@ -10,8 +10,8 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <a href="{% url 'spam:spam_detail' spam.pk %}"><button type="submit" class="btn btn-dark">Сохранить</button></a>
-            <a href="{% url 'spam:spam_list' %}" class="btn btn-danger">Отмена</a>
+            <a href="{% url 'authorization:spam_detail' spam.pk %}"><button type="submit" class="btn btn-dark">Сохранить</button></a>
+            <a href="{% url 'authorization:spam_list' %}" class="btn btn-danger">Отмена</a>
         </form>
     </div>
     <script src="/static/js/bootstrap.bundle.min.js"></script>

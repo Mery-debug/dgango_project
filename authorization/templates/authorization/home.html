@@ -1,0 +1,57 @@
+{% extends "authorization/base.html" %}
+
+{% block title %}Каталог{% endblock %}
+{% block content %}
+
+<ul>
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Список статей</h1>
+    <p class="lead">Список статей - пробный вариант работы.</p>
+    </div>
+
+<div class="container">
+    <div class="row text-center">
+        <div class="col-8">
+            <div class="col-sm-4 w-30">
+                <div class="card mb-4 box-shadow ">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Удобный сервис для поиска и размещения сообщений</h4>
+                    </div>
+                    {% if user.is_active %}
+                    <div class="card-body">
+                        {% csrf_token %}
+                        <a href="{% url 'spam:create' %}" class="btn btn-lg btn-block btn-outline-primary">
+                            Написать
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="card-body">
+                        {% csrf_token %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="col-sm-4 w-30">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4 class="my-0 font-weight-normal">Удобный сервис для покупки товаров</h4>
+                    </div>
+                    {% if user.is_active %}
+                    <div class="card-body">
+                        <a href="{% url 'authorization:product_create' %}" class="btn btn-lg btn-block btn-outline-primary">
+                            добавить товар
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="card-body"></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        </div>
+</div>
+</ul>
+{% include "authorization/floor.html" %}
+{% endblock %}

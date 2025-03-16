@@ -1,0 +1,32 @@
+{% extends 'spam/base.html' %}
+
+{% block title %}{{ spam.name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ spam.name }}</h1>
+<ul>
+    <div class="card">
+        <div class="card-body">
+            {% if spam.img %}
+                <img src="{{ spam.img.url }}" class="card-img-top w-25" alt="404 not found">
+            {% else %}
+                <img src="{{ spam.img.default }}" class="card-img-top w-25">
+            {% endif %}
+            <li class="list-group-item">Название статьи: {{ spam.name }}</li>
+            <li class="list-group-item">Текст статьи: {{ spam.content }}</li>
+            <p>Создано: {{ spam.created_at }}</p>
+            <p>Обновлено: {{ spam.updated_at }}</p>
+            <p>Счетчик просмотров: {{ spam.view_count }}</p>
+            {% if user.is_active %}
+            <a href="{% url 'spam:update' spam.pk %}" class="btn btn-secondary">Редактировать</a>
+            <a href="{% url 'spam:delete' spam.pk %}" class="btn btn-danger">Удалить</a>
+            <a href="{% url 'spam:spam_list' %}" class="btn btn-primary">Вернуться к списку</a>
+            {% else %}
+            <a href="{% url 'spam:spam_list' %}" class="btn btn-primary">Вернуться к списку</a>
+            {% endif %}
+        </div>
+    </div>
+</ul>
+{% include "authorization/floor.html" %}
+{% endblock %}
+

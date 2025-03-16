@@ -1,0 +1,10 @@
+{% extends "authorization/base.html" %}
+
+{% block content %}
+  <h2>Вход</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <a href="{% url 'authorization:home' %}"><button type="submit">Войти</button></a>
+  </form>
+{% endblock %}

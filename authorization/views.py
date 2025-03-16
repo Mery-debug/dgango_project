@@ -3,6 +3,8 @@ import os
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
+
+from config.settings import EMAIL_HOST_USER
 from .forms import AuthForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
@@ -27,7 +29,7 @@ class AuthRegister(FormView):
         subject = 'Добро пожаловать,'
         message = 'Спасибо, что зарегистрировались в нашем сервисе!'
         load_dotenv()
-        from_email = os.getenv('EMAIL_HOST_USER')
+        from_email = EMAIL_HOST_USER
         recipient_list = [user_email]
         send_mail(subject, message, from_email, recipient_list)
 

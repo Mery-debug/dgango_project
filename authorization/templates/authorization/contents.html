@@ -22,11 +22,6 @@
                 <a href="{% url 'spam:spam_detail' spam.pk %}">{{ spam.name }}</a>
             </li>
             <li class="list-group-item">Текст статьи: {{ spam.content }}</li>
-            {% if user.is_active %}
-            <a href="{% url 'spam:update' spam.pk %}" class="btn btn-secondary">Редактировать</a>
-            <a href="{% url 'spam:delete' spam.pk %}" class="btn btn-danger">Удалить</a>
-            {% else %}
-            {% endif %}
         </div>
     </div>
     {% endfor %}

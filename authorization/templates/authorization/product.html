@@ -22,7 +22,9 @@
             <p>Счетчик просмотров: {{ product.view_count }}</p>
           {% if user.is_active %}
             <a href="{% url 'authorization:product_edit' product.pk %}" class="btn btn-secondary">Редактировать</a>
-            <a href="{% url 'authorization:product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
+            {% if perms.authorization.can_delete_product %}
+                <a href="{% url 'authorization:product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
+            {% endif %}
             <a href="{% url 'authorization:product_list' %}" class="btn btn-primary">Вернуться к списку</a>
           {% else %}
             <a href="{% url 'authorization:product_list' %}" class="btn btn-primary">Вернуться к списку</a>

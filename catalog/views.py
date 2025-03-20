@@ -74,6 +74,15 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
 
+    def post(self, request, *args, **kwargs):
+        product = get_object_or_404(*args, **kwargs)
+
+        if not request.user.has_perm('product.can_publish_product'):
+            return HttpResponseForbidden('Не достаточно прав для публикации нового товара, зарегистрируйтесь или '
+                                         'войди в аккаунт.')
+        product.save()
+        return redirect('catalog:product_list')
+
 
 class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = 'catalog.Product'
@@ -94,16 +103,21 @@ class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     template_name = "authorization/confirm_delete.html"
     success_url = reverse_lazy("authorization:product_list")
 
-
-class AddProductView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         product = get_object_or_404(*args, **kwargs)
 
-        if not request.user.has_perm('product.can_publish_product'):
-            return HttpResponseForbidden('Не достаточно правд для публикации нового товара, зарегистрируйтесь или '
+        if not request.user.has_perm('product.can_delete_product'):
+            return HttpResponseForbidden('Не достаточно прав для удаления товара, зарегистрируйтесь или '
                                          'войди в аккаунт.')
-        product.save()
+        product.delete()
         return redirect('catalog:product_list')
+
+
+
+
+
+
+
 
 
 

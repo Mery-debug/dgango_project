@@ -8,7 +8,9 @@
 
 <ul>
   {% if user.is_active %}
-    <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
+    {% if perms.authorization.can_unpublish_product %}
+        <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
+    {% endif %}
   {% else %}
   {% endif %}
         {% csrf_token %}

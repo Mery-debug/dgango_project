@@ -50,3 +50,6 @@ class CustomLogoutView(View):
 class CustomLoginView(LoginView):
     template_name = "authorization/login.html"
     success_url = reverse_lazy("authorization:home")
+
+
+

@@ -1,5 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
@@ -61,7 +62,8 @@ class CatalogViewDetail(DetailView):
             return None
 
 
-class CatalogCreateView(LoginRequiredMixin, CreateView):
+class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'catalog.Product'
     model = Product
     form_class = ProductForm
     template_name = "authorization/create_spam.html"
@@ -73,7 +75,8 @@ class CatalogCreateView(LoginRequiredMixin, CreateView):
         )
 
 
-class CatalogUpdateView(LoginRequiredMixin, UpdateView):
+class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'catalog.Product'
     model = Product
     form_class = ProductForm
     template_name = "authorization/update_spam.html"
@@ -85,7 +88,23 @@ class CatalogUpdateView(LoginRequiredMixin, UpdateView):
         )
 
 
-class CatalogDeleteView(LoginRequiredMixin, DeleteView):
+class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'catalog.Product'
     model = Product
     template_name = "authorization/confirm_delete.html"
     success_url = reverse_lazy("authorization:product_list")
+
+
+class AddProductView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        product = get_object_or_404(*args, **kwargs)
+
+        if not request.user.has_perm('product.can_publish_product'):
+            return HttpResponseForbidden('Не достаточно правд для публикации нового товара, зарегистрируйтесь или '
+                                         'войди в аккаунт.')
+        product.save()
+        return redirect('catalog:product_list')
+
+
+
+

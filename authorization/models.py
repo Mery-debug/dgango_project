@@ -23,3 +23,14 @@ class Auth(AbstractUser):
     def get_absolute_url(self):
         self.is_active = True
         return reverse("authorization:home")
+
+    class Meta:
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
+        ordering = ['email']
+        permissions = [
+            ("can_publish_product", "Can publish new product"),
+            ("can_delete_product", "can delete product")
+        ]
+
+

@@ -66,7 +66,7 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
     permission_required = 'catalog.Product'
     model = Product
     form_class = ProductForm
-    template_name = "authorization/create_spam.html"
+    template_name = "authorization/create_product.html"
     success_url = reverse_lazy("authorization:product_detail")
 
     def get_success_url(self):
@@ -75,13 +75,22 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         )
 
     def post(self, request, *args, **kwargs):
-        product = get_object_or_404(*args, **kwargs)
+        if request.method == 'POST':
+            product = get_object_or_404(*args, **kwargs)
 
-        if not request.user.has_perm('product.can_publish_product'):
-            return HttpResponseForbidden('Не достаточно прав для публикации нового товара, зарегистрируйтесь или '
-                                         'войди в аккаунт.')
-        product.save()
-        return redirect('catalog:product_list')
+            if not request.user.has_perm('product.can_unpublish_product'):
+                return HttpResponseForbidden('Не достаточно прав для публикации нового товара, зарегистрируйтесь или '
+                                             'войди в аккаунт.')
+            form = ProductForm
+            product.save()
+            if form.is_valid:
+                product = form.save(commit=False)
+                product.owner = request.user
+                product.save()
+                return redirect('authorization:product_list')
+        else:
+            form = ProductForm()
+        return render(request, 'authorization/create_product.html', {'form': form})
 
 
 class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
@@ -111,14 +120,3 @@ class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
                                          'войди в аккаунт.')
         product.delete()
         return redirect('catalog:product_list')
-
-
-
-
-
-
-
-
-
-
-

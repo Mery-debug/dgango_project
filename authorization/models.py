@@ -29,8 +29,10 @@ class Auth(AbstractUser):
         verbose_name_plural = 'пользователи'
         ordering = ['email']
         permissions = [
-            ("can_unpublish_product", "Can unpublish new product"),
-            ("can_delete_product", "can delete product")
+            ("can_unpublish_product", "can unpublish new product"),
+            ("can_delete_product", "can delete product"),
+            ("can_edit_product", "can edit product"),
+            ("can_add_product", "can add product")
         ]
 
 

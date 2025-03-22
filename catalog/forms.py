@@ -4,6 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from dotenv import load_dotenv
 
+from authorization.models import Auth
 from .models import Product
 
 load_dotenv()
@@ -17,7 +18,7 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        exclude = ["name", "descriptions", "category", "price", "img"]
+        fields = ['name', 'descriptions', 'category', 'price', 'img', 'is_published']
 
     def update_field_attributes(self):
         for field_name in self.fields:
@@ -55,9 +56,9 @@ class ProductForm(forms.ModelForm):
         else:
             img_name = img.name.lower()
             if not (
-                img_name.endswith(".jpeg")
-                or img_name.endswith(".png")
-                or img_name.endswith(".jpg")
+                    img_name.endswith(".jpeg")
+                    or img_name.endswith(".png")
+                    or img_name.endswith(".jpg")
             ):
                 raise ValidationError(
                     "Выберите изображение в формате .jpeg, .jpg или .png"
@@ -68,3 +69,10 @@ class ProductForm(forms.ModelForm):
                     "Максимальный вес загружаемого изображения не должен превышать 5 Мб "
                 )
             return img
+
+    # def _clean_form(self):
+    #     if Auth.objects.has_perm('can_unpublish_product'):
+    #         fields = ["is_published"]
+    #     else:
+    #         fields = ['name', 'descriptions', 'category', 'price', 'img']
+    #     return fields

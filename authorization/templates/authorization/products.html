@@ -14,6 +14,7 @@
         {% csrf_token %}
         {{ form.as_p }}
         {% for product in products %}
+        {% if product.is_published %}
         <div class="card">
             <div class="card-body">
                 <li class="list-group-item">
@@ -24,6 +25,8 @@
                 <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
             </div>
         </div>
+        {% else %}
+        {% endif %}
         {% empty %}
         <li>Нет доступных продуктов.</li>
         {% endfor %}

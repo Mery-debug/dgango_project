@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
+
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
@@ -63,7 +64,7 @@ class CatalogViewDetail(DetailView):
 
 
 class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    permission_required = 'catalog.Product'
+    permission_required = 'authorization.Auth'
     model = Product
     form_class = ProductForm
     template_name = "authorization/create_product.html"
@@ -76,9 +77,9 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
-            product = get_object_or_404(*args, **kwargs)
+            product = get_object_or_404(Product, *args, **kwargs)
 
-            if not request.user.has_perm('product.can_unpublish_product'):
+            if not request.user.has_perm('product.can_add_product') and not request.user:
                 return HttpResponseForbidden('Не достаточно прав для публикации нового товара, зарегистрируйтесь или '
                                              'войди в аккаунт.')
             form = ProductForm
@@ -94,7 +95,7 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
 
 
 class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    permission_required = 'catalog.Product'
+    permission_required = 'authorization.can_edit_product'
     model = Product
     form_class = ProductForm
     template_name = "authorization/update_spam.html"
@@ -105,9 +106,18 @@ class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
 
+    def post(self, request, *args, **kwargs):
+        product = get_object_or_404(*args, **kwargs)
+
+        if not request.user.has_perm('authorization.can_unpublish_product') and not request.user.has_perm(''):
+            return HttpResponseForbidden('Не достаточно прав для изменения товара, зарегистрируйтесь или '
+                                         'войди в аккаунт.')
+        product.save()
+        return redirect('catalog:product_list')
+
 
 class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    permission_required = 'catalog.Product'
+    permission_required = 'authorization.can_delete_product'
     model = Product
     template_name = "authorization/confirm_delete.html"
     success_url = reverse_lazy("authorization:product_list")

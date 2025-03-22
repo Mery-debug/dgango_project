@@ -13,12 +13,13 @@ load_dotenv()
 class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
+        self.user = kwargs.pop('user', None)
         self.update_field_attributes()
         self.lst_exception = os.getenv("LST_EXCEPTION").split(",")
 
     class Meta:
         model = Product
-        fields = ['name', 'descriptions', 'category', 'price', 'img', 'is_published']
+        fields = ['name', 'descriptions', 'category', 'price', 'img']
 
     def update_field_attributes(self):
         for field_name in self.fields:
@@ -70,9 +71,11 @@ class ProductForm(forms.ModelForm):
                 )
             return img
 
-    # def _clean_form(self):
-    #     if Auth.objects.has_perm('can_unpublish_product'):
-    #         fields = ["is_published"]
-    #     else:
-    #         fields = ['name', 'descriptions', 'category', 'price', 'img']
-    #     return fields
+
+class ProductModeratorForm(forms.ModelForm):
+    def checkbox_is_published(self):
+        if self.user and not self.user.groups.filter(name='Модераторы').exests():
+            raise forms.ValidationError('У вас не достаточно прав')
+        else:
+            checkbox = forms.BooleanField(required=True, label='выберите этот параметр для публикации продукта', initial=False)
+            return checkbox

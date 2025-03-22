@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -35,6 +36,21 @@ class CatalogViewList(ListView):
 
     def get_queryset(self):
         return Product.objects.filter(is_active=True)
+
+    def moder_view(self, request):
+        group_name = 'Модераторы'
+        group = Group.objects.get(name=group_name)
+        return render(request, 'authorization:products.html', {'group': group})
+
+    def product_list(self, request):
+        group_name = 'Модераторы'
+        group = Group.objects.get(name=group_name)
+        if group:
+            products = Product.objects.filter(is_published=False)
+            return render(request, 'authorization/product_list.html', {'products': products})
+        else:
+            products = Product.objects.filter(is_published=True)
+            return render(request, 'authorization/product_list.html', {'products': products})
 
 
 class CatalogViewDetail(DetailView):
@@ -77,20 +93,21 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
-            product = get_object_or_404(Product, *args, **kwargs)
+            if not request.user.is_authenticated:
+                return HttpResponseForbidden(
+                    'Не достаточно прав для публикации нового товара, зарегистрируйтесь или войдите в аккаунт.')
 
-            if not request.user.has_perm('product.can_add_product') and not request.user:
-                return HttpResponseForbidden('Не достаточно прав для публикации нового товара, зарегистрируйтесь или '
-                                             'войди в аккаунт.')
-            form = ProductForm
-            product.save()
-            if form.is_valid:
+            if not request.user.has_perm('product.can_add_product'):
+                return HttpResponseForbidden('У вас нет прав для добавления товара.')
+
+            form = ProductForm(request.POST, request.FILES)
+            if form.is_valid():
                 product = form.save(commit=False)
                 product.owner = request.user
-                product.save()
                 return redirect('authorization:product_list')
         else:
             form = ProductForm()
+
         return render(request, 'authorization/create_product.html', {'form': form})
 
 
@@ -109,7 +126,7 @@ class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
     def post(self, request, *args, **kwargs):
         product = get_object_or_404(*args, **kwargs)
 
-        if not request.user.has_perm('authorization.can_unpublish_product') and not request.user.has_perm(''):
+        if not request.user.has_perm('authorization.can_unpublish_product') and not request.user:
             return HttpResponseForbidden('Не достаточно прав для изменения товара, зарегистрируйтесь или '
                                          'войди в аккаунт.')
         product.save()
@@ -125,7 +142,7 @@ class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     def post(self, request, *args, **kwargs):
         product = get_object_or_404(*args, **kwargs)
 
-        if not request.user.has_perm('product.can_delete_product'):
+        if not request.user.has_perm('authorization.can_delete_product'):
             return HttpResponseForbidden('Не достаточно прав для удаления товара, зарегистрируйтесь или '
                                          'войди в аккаунт.')
         product.delete()

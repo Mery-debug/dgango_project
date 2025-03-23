@@ -1,13 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import Group
-from django.http import HttpResponseForbidden
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
 
-from .forms import ProductForm
+from .forms import ProductForm, ProductModeratorForm
 from .models import Product
 
 
@@ -36,21 +34,6 @@ class CatalogViewList(ListView):
 
     def get_queryset(self):
         return Product.objects.filter(is_active=True)
-
-    def moder_view(self, request):
-        group_name = 'Модераторы'
-        group = Group.objects.get(name=group_name)
-        return render(request, 'authorization:products.html', {'group': group})
-
-    def product_list(self, request):
-        group_name = 'Модераторы'
-        group = Group.objects.get(name=group_name)
-        if group:
-            products = Product.objects.filter(is_published=False)
-            return render(request, 'authorization/product_list.html', {'products': products})
-        else:
-            products = Product.objects.filter(is_published=True)
-            return render(request, 'authorization/product_list.html', {'products': products})
 
 
 class CatalogViewDetail(DetailView):
@@ -91,25 +74,6 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
 
-    def post(self, request, *args, **kwargs):
-        if request.method == 'POST':
-            if not request.user.is_authenticated:
-                return HttpResponseForbidden(
-                    'Не достаточно прав для публикации нового товара, зарегистрируйтесь или войдите в аккаунт.')
-
-            if not request.user.has_perm('product.can_add_product'):
-                return HttpResponseForbidden('У вас нет прав для добавления товара.')
-
-            form = ProductForm(request.POST, request.FILES)
-            if form.is_valid():
-                product = form.save(commit=False)
-                product.owner = request.user
-                return redirect('authorization:product_list')
-        else:
-            form = ProductForm()
-
-        return render(request, 'authorization/create_product.html', {'form': form})
-
 
 class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = 'authorization.can_edit_product'
@@ -123,14 +87,12 @@ class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
 
-    def post(self, request, *args, **kwargs):
-        product = get_object_or_404(*args, **kwargs)
-
-        if not request.user.has_perm('authorization.can_unpublish_product') and not request.user:
-            return HttpResponseForbidden('Не достаточно прав для изменения товара, зарегистрируйтесь или '
-                                         'войди в аккаунт.')
-        product.save()
-        return redirect('catalog:product_list')
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ProductForm
+        if user.has_perms("can_unpublish_product", "can_delete_product"):
+            return ProductModeratorForm
 
 
 class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
@@ -139,11 +101,3 @@ class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     template_name = "authorization/confirm_delete.html"
     success_url = reverse_lazy("authorization:product_list")
 
-    def post(self, request, *args, **kwargs):
-        product = get_object_or_404(*args, **kwargs)
-
-        if not request.user.has_perm('authorization.can_delete_product'):
-            return HttpResponseForbidden('Не достаточно прав для удаления товара, зарегистрируйтесь или '
-                                         'войди в аккаунт.')
-        product.delete()
-        return redirect('catalog:product_list')

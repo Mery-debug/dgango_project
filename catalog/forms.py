@@ -13,7 +13,6 @@ load_dotenv()
 class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
-        self.user = kwargs.pop('user', None)
         self.update_field_attributes()
         self.lst_exception = os.getenv("LST_EXCEPTION").split(",")
 
@@ -73,9 +72,19 @@ class ProductForm(forms.ModelForm):
 
 
 class ProductModeratorForm(forms.ModelForm):
-    def checkbox_is_published(self):
-        if self.user and not self.user.groups.filter(name='Модераторы').exests():
-            raise forms.ValidationError('У вас не достаточно прав')
-        else:
-            checkbox = forms.BooleanField(required=True, label='выберите этот параметр для публикации продукта', initial=False)
-            return checkbox
+    def __init__(self, *args, **kwargs):
+        super(ProductModeratorForm, self).__init__(*args, **kwargs)
+        self.update_field_attributes()
+
+    class Meta:
+        model = Product
+        fields = ['is_published']
+
+    def update_field_attributes(self):
+        for field_name in self.fields:
+            self.fields[field_name].widget.attrs.update(
+                {
+                    "class": "form-control",
+                    "placeholder": f"Введите {self.fields[field_name].label.lower()}",
+                }
+            )

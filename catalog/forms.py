@@ -4,7 +4,6 @@ from django import forms
 from django.core.exceptions import ValidationError
 from dotenv import load_dotenv
 
-from authorization.models import Auth
 from .models import Product
 
 load_dotenv()

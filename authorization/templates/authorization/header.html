@@ -9,7 +9,7 @@
         <form method="post" action="{% url 'authorization:logout' %}" style="display: inline;">
           {% csrf_token %}
           <a href="/authorization/product_list/"><button class="p-2 btn btn-outline-primary" type="submit">Выйти</button></a>
-          <p>Добро пожаловать, {{ user.username }}!</p>
+          <p>Добро пожаловать, {{ user.email }}!</p>
         </form>
       {% else %}
         <a href="{% url 'authorization:login' %}"><button class="p-2 btn btn-outline-primary" type="submit">Войти</button></a>

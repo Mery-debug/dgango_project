@@ -28,20 +28,14 @@ class CatalogContactsView(View):
 
 class CatalogViewList(ListView):
     model = Product
-    form_class = ProductForm
     context_object_name = "products"
     template_name = "authorization/products.html"
     success_url = reverse_lazy("authorization:product_list")
 
     def get_queryset(self):
-        return Product.objects.filter(is_active=True)
-
-    def clean_view(self):
         user = self.request.user
         if user.groups.filter(name='Moder').exists():
             return Product.objects.all()
-        if user.is_active:
-            return Product.objects.filter(is_published=True)
         return Product.objects.filter(is_published=True)
 
 
@@ -71,31 +65,27 @@ class CatalogViewDetail(DetailView):
             return None
 
 
-class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    permission_required = 'authorization.Auth'
+class CatalogCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = "authorization/create_product.html"
-    success_url = reverse_lazy("authorization:product_detail")
 
     def get_success_url(self):
         return reverse_lazy(
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
 
-    def post_new(self, request):
-        user = self.request.user
-        if user.has_perm('catalog.can_add_product'):
-            form = ProductForm()
-            return render(request, 'create_product.html', {'form': form})
-        raise PermissionDenied("У вас нет прав для добавления продукта.")
+    def has_permission(self):
+        return self.request.user.groups.filter(name="moder").exists()
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
-class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    permission_required = 'catalog.can_edit_product'
+class CatalogUpdateView(UpdateView):
     model = Product
-    form_class = ProductForm
-    template_name = "authorization/update_spam.html"
+    template_name = "authorization/update_product.html"
     success_url = reverse_lazy("authorization:product_detail")
 
     def get_success_url(self):
@@ -112,9 +102,13 @@ class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         raise PermissionDenied
 
 
-class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    permission_required = 'catalog.can_delete_product'
+class CatalogDeleteView(DeleteView):
     model = Product
-    template_name = "authorization/confirm_delete.html"
     success_url = reverse_lazy("authorization:product_list")
+
+    def get_template_names(self):
+        user = self.request.user
+        if user == self.object.owner or user.groups.filter(name='Moder').exists():
+            return "authorization/confirm_delete.html"
+        raise PermissionDenied
 

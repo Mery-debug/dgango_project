@@ -83,7 +83,7 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
 
-    def post(self, request):
+    def post_new(self, request):
         user = self.request.user
         if user.has_perm('catalog.can_add_product'):
             form = ProductForm()

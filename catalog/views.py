@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 
 from django.urls import reverse_lazy
@@ -34,6 +35,14 @@ class CatalogViewList(ListView):
 
     def get_queryset(self):
         return Product.objects.filter(is_active=True)
+
+    def clean_view(self):
+        user = self.request.user
+        if user.groups.filter(name='Moder').exists():
+            return Product.objects.all()
+        if user.is_active:
+            return Product.objects.filter(is_published=True)
+        return Product.objects.filter(is_published=True)
 
 
 class CatalogViewDetail(DetailView):
@@ -74,9 +83,16 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
 
+    def post(self, request):
+        user = self.request.user
+        if user.has_perm('catalog.can_add_product'):
+            form = ProductForm()
+            return render(request, 'create_product.html', {'form': form})
+        raise PermissionDenied("У вас нет прав для добавления продукта.")
+
 
 class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    permission_required = 'authorization.can_edit_product'
+    permission_required = 'catalog.can_edit_product'
     model = Product
     form_class = ProductForm
     template_name = "authorization/update_spam.html"
@@ -91,12 +107,13 @@ class CatalogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         user = self.request.user
         if user == self.object.owner:
             return ProductForm
-        if user.has_perms("can_unpublish_product", "can_delete_product"):
+        if user.groups.filter(name='Moder').exists():
             return ProductModeratorForm
+        raise PermissionDenied
 
 
 class CatalogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    permission_required = 'authorization.can_delete_product'
+    permission_required = 'catalog.can_delete_product'
     model = Product
     template_name = "authorization/confirm_delete.html"
     success_url = reverse_lazy("authorization:product_list")

@@ -28,6 +28,9 @@ class Auth(AbstractUser):
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'
         ordering = ['email']
-
+        permissions = [
+            ("can_add_product", "can add new product"),
+            ("can_view_product", "can view product")
+        ]
 
 

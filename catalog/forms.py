@@ -84,7 +84,7 @@ class ProductModeratorForm(forms.ModelForm):
         for field_name in self.fields:
             self.fields[field_name].widget.attrs.update(
                 {
-                    "class": "form-control",
+                    "class": "checkbox",
                     "placeholder": f"Введите {self.fields[field_name].label.lower()}",
                 }
             )

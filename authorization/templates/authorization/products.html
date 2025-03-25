@@ -8,9 +8,6 @@
 
 <ul>
   {% if user.is_active %}
-<!--    {% if user.is_moderator %}-->
-<!--    {% endif %}-->
-<!--  {% else %}-->
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
   {% endif %}
         {{ form.as_p }}

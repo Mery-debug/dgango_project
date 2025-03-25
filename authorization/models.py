@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 
+from config.settings import MODERATOR_GROUP
+
 
 class Auth(AbstractUser):
     username = models.CharField(blank=True, null=True, verbose_name="Имя пользователя")
@@ -26,7 +28,7 @@ class Auth(AbstractUser):
 
     @property
     def is_moderator(self) -> bool:
-        return self.groups.filter(name='moder').exists()
+        return self.groups.filter(name=MODERATOR_GROUP).exists()
 
     class Meta:
         verbose_name = 'пользователь'

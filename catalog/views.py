@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
 
+from config.settings import MODERATOR_GROUP
 from .forms import ProductForm, ProductModeratorForm
 from .models import Product
 
@@ -34,7 +35,7 @@ class CatalogViewList(ListView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.groups.filter(name='Moder').exists():
+        if user.groups.filter(name=MODERATOR_GROUP).exists():
             return Product.objects.all()
         return Product.objects.filter(is_published=True)
 
@@ -65,7 +66,7 @@ class CatalogViewDetail(DetailView):
             return None
 
 
-class CatalogCreateView(LoginRequiredMixin, CreateView):
+class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = "authorization/create_product.html"
@@ -76,14 +77,17 @@ class CatalogCreateView(LoginRequiredMixin, CreateView):
         )
 
     def has_permission(self):
-        return self.request.user.groups.filter(name="moder").exists()
+        if self.request.user.is_active and not self.request.user.groups.filter(name=MODERATOR_GROUP).exists():
+            return self.request.user.is_active
+
+
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
 
-class CatalogUpdateView(UpdateView):
+class CatalogUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     template_name = "authorization/update_product.html"
     success_url = reverse_lazy("authorization:product_detail")
@@ -97,18 +101,18 @@ class CatalogUpdateView(UpdateView):
         user = self.request.user
         if user == self.object.owner:
             return ProductForm
-        if user.groups.filter(name='Moder').exists():
+        if user.groups.filter(name=MODERATOR_GROUP).exists():
             return ProductModeratorForm
         raise PermissionDenied
 
 
-class CatalogDeleteView(DeleteView):
+class CatalogDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy("authorization:product_list")
 
     def get_template_names(self):
         user = self.request.user
-        if user == self.object.owner or user.groups.filter(name='Moder').exists():
+        if user == self.object.owner or user.groups.filter(name=MODERATOR_GROUP).exists():
             return "authorization/confirm_delete.html"
         raise PermissionDenied
 

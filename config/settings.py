@@ -52,6 +52,7 @@ AUTH_USER_MODEL = "authorization.Auth"
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "goodbye"
+MODERATOR_GROUP = "Moder"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

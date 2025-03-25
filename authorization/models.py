@@ -24,6 +24,10 @@ class Auth(AbstractUser):
         self.is_active = True
         return reverse("authorization:home")
 
+    @property
+    def is_moderator(self) -> bool:
+        return self.groups.filter(name='moder').exists()
+
     class Meta:
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'

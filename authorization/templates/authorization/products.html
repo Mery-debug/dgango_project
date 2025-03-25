@@ -9,7 +9,6 @@
 <ul>
   {% if user.is_active %}
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
-  {% else %}
   {% endif %}
         {{ form.as_p }}
         {% for product in products %}
@@ -25,7 +24,7 @@
             </div>
         </div>
         {% else %}
-            {% if user.groups %}
+            {% if user.is_moderator %}
                 <div class="card">
                     <div class="card-body">
                         <li class="list-group-item">

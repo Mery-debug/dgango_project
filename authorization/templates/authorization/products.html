@@ -7,7 +7,8 @@
 <h1 class="mb-4">Список товаров</h1>
 
 <ul>
-  {% if user.is_active %}
+  {% if user.is_moderator %}
+  {% elif user.is_active %}
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
   {% endif %}
         {{ form.as_p }}

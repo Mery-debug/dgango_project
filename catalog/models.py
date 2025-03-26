@@ -26,7 +26,7 @@ class Product(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="products"
     )
-    price = models.DecimalField(decimal_places=10, max_digits=14, verbose_name="цена")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="цена")
     view_count = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
     created_at = models.DateField(auto_now_add=True)

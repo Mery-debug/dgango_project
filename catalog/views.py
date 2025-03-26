@@ -42,7 +42,6 @@ class CatalogViewList(ListView):
 
 class CatalogViewDetail(DetailView):
     model = Product
-    form_class = ProductForm
     template_name = "authorization/product.html"
     success_url = reverse_lazy("product_details")
 
@@ -50,6 +49,18 @@ class CatalogViewDetail(DetailView):
         return reverse_lazy(
             "authorization:product_detail", kwargs={"pk": self.object.pk}
         )
+
+    def get_form_class(self):
+        user = self.request.user
+        if user.groups.filter(name=MODERATOR_GROUP).exists():
+            return ProductModeratorForm
+        return ProductForm
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.groups.filter(name=MODERATOR_GROUP).exists():
+            return Product.objects.all()
+        return Product.objects.filter(is_published=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -72,15 +83,11 @@ class CatalogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
     template_name = "authorization/create_product.html"
 
     def get_success_url(self):
-        return reverse_lazy(
-            "authorization:product_detail", kwargs={"pk": self.object.pk}
-        )
+        return reverse_lazy("authorization:product_list")
 
     def has_permission(self):
-        if self.request.user.is_active and not self.request.user.groups.filter(name=MODERATOR_GROUP).exists():
+        if not self.request.user.groups.filter(name=MODERATOR_GROUP).exists():
             return self.request.user.is_active
-
-
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -93,9 +100,7 @@ class CatalogUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("authorization:product_detail")
 
     def get_success_url(self):
-        return reverse_lazy(
-            "authorization:product_detail", kwargs={"pk": self.object.pk}
-        )
+        return reverse_lazy("authorization:product_list")
 
     def get_form_class(self):
         user = self.request.user

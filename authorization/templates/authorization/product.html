@@ -20,12 +20,10 @@
             <p>Создано: {{ product.created_at }}</p>
             <p>Обновлено: {{ product.updated_at }}</p>
             <p>Счетчик просмотров: {{ product.view_count }}</p>
-          {% if product.owner %}
-            {% if user.groups %}
+          {% if product.owner or user.is_moderator%}
             <a href="{% url 'authorization:product_edit' product.pk %}" class="btn btn-secondary">Редактировать</a>
             <a href="{% url 'authorization:product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
             <a href="{% url 'authorization:product_list' %}" class="btn btn-primary">Вернуться к списку</a>
-            {% endif %}
           {% else %}
             <a href="{% url 'authorization:product_list' %}" class="btn btn-primary">Вернуться к списку</a>
           {% endif %}

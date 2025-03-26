@@ -4,6 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from dotenv import load_dotenv
 
+from config.settings import LST_EXCEPTION
 from .models import Product
 
 load_dotenv()
@@ -13,7 +14,7 @@ class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
         self.update_field_attributes()
-        self.lst_exception = os.getenv("LST_EXCEPTION").split(",")
+        self.lst_exception = LST_EXCEPTION
 
     class Meta:
         model = Product

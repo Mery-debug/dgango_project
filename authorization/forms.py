@@ -6,8 +6,6 @@ from django.core.exceptions import ValidationError
 
 from .models import Auth
 
-# from django.core.validators import EmailValidator
-
 
 class AuthForm(UserCreationForm):
     username = forms.CharField(

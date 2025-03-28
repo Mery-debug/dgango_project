@@ -4,6 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from dotenv import load_dotenv
 
+from config.settings import LST_EXCEPTION
 from .models import Product
 
 load_dotenv()
@@ -13,11 +14,11 @@ class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
         self.update_field_attributes()
-        self.lst_exception = os.getenv("LST_EXCEPTION").split(",")
+        self.lst_exception = LST_EXCEPTION
 
     class Meta:
         model = Product
-        fields = ["name", "descriptions", "category", "price", "img"]
+        fields = ['name', 'descriptions', 'category', 'price', 'img']
 
     def update_field_attributes(self):
         for field_name in self.fields:
@@ -44,7 +45,7 @@ class ProductForm(forms.ModelForm):
 
     def clean_price(self):
         price = self.cleaned_data.get("price")
-        if price is not None and price <= 0:  # Проверка на None
+        if price is not None and price <= 0:
             raise ValidationError("Цена не может быть ниже нуля или равняться нулю")
         return price
 
@@ -55,9 +56,9 @@ class ProductForm(forms.ModelForm):
         else:
             img_name = img.name.lower()
             if not (
-                img_name.endswith(".jpeg")
-                or img_name.endswith(".png")
-                or img_name.endswith(".jpg")
+                    img_name.endswith(".jpeg")
+                    or img_name.endswith(".png")
+                    or img_name.endswith(".jpg")
             ):
                 raise ValidationError(
                     "Выберите изображение в формате .jpeg, .jpg или .png"
@@ -68,3 +69,22 @@ class ProductForm(forms.ModelForm):
                     "Максимальный вес загружаемого изображения не должен превышать 5 Мб "
                 )
             return img
+
+
+class ProductModeratorForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProductModeratorForm, self).__init__(*args, **kwargs)
+        self.update_field_attributes()
+
+    class Meta:
+        model = Product
+        fields = ['is_published']
+
+    def update_field_attributes(self):
+        for field_name in self.fields:
+            self.fields[field_name].widget.attrs.update(
+                {
+                    "class": "checkbox",
+                    "placeholder": f"Введите {self.fields[field_name].label.lower()}",
+                }
+            )

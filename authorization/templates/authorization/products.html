@@ -7,13 +7,13 @@
 <h1 class="mb-4">Список товаров</h1>
 
 <ul>
-  {% if user.is_active %}
+  {% if user.is_moderator %}
+  {% elif user.is_active %}
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
-  {% else %}
   {% endif %}
-        {% csrf_token %}
         {{ form.as_p }}
         {% for product in products %}
+        {% if product.is_published %}
         <div class="card">
             <div class="card-body">
                 <li class="list-group-item">
@@ -24,6 +24,20 @@
                 <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
             </div>
         </div>
+        {% else %}
+            {% if user.is_moderator %}
+                <div class="card">
+                    <div class="card-body">
+                        <li class="list-group-item">
+                            Название товара:
+                            <a href="{% url 'authorization:product_detail' product.pk %}">{{ product.name }}</a>
+                        </li>
+                        <li class="list-group-item">Категория товара: {{ product.category }}</li>
+                        <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
         {% empty %}
         <li>Нет доступных продуктов.</li>
         {% endfor %}

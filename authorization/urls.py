@@ -95,7 +95,7 @@ urlpatterns = [
         name="delete_spam",
     ),
     path(
-        "authorization/category_list/<str:pk>",
+        "authorization/category_list/<int:pk>",
         CategoryView.as_view(template_name="authorization/category.html"),
         name="category_list",
     ),

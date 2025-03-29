@@ -11,6 +11,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
 from config.settings import MODERATOR_GROUP
 from .forms import ProductForm, ProductModeratorForm
 from .models import Product, Category
+from authorization.servicies import CategoryProduct
 
 
 class CatalogHomeView(View):
@@ -125,17 +126,18 @@ class CatalogDeleteView(LoginRequiredMixin, DeleteView):
         raise PermissionDenied
 
 
-class CategoryView(ListView):
+class CategoryView(LoginRequiredMixin, DetailView):
     model = Category
     template_name = "authorization/category.html"
 
     def get_success_url(self):
         return reverse_lazy(
-            "authorization:category_list", kwargs={"pk": self.object.name}
+            "authorization:category_list", kwargs={"pk": self.object.id}
         )
 
-    def get_queryset(self):
-        user = self.request.user
-        if user.groups.filter(name=MODERATOR_GROUP).exists():
-            return Product.objects.all()
-        return Product.objects.filter(is_published=True)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.object.id
+        context["category"] = CategoryProduct.category_product(category_id)
+        return context
+

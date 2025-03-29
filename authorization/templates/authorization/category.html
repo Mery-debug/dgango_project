@@ -8,15 +8,18 @@
 
 <ul>
         {% for product in products %}
-        {% if product.category.name %}
+        {% if product.products_in_category %}
         <div class="card">
             <div class="card-body">
                 <li class="list-group-item">
                     Название товара:
                     <a href="{% url 'authorization:product_detail' product.pk %}">{{ product.name }}</a>
                 </li>
-                <li class="list-group-item">Категория товара: {{ product.category }}</li>
                 <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+                <li class="list-group-item">Описание товара: {{ product.price }}</li>
+                {% if user.is_moderator %}
+                    <li class="list-group-item">Описание товара: {{ product.is_published }}</li>
+                {% endif %}
             </div>
         </div>
         {% else %}

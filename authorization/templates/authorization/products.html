@@ -9,6 +9,15 @@
 <ul>
   {% if user.is_moderator %}
   {% elif user.is_active %}
+    <div class="dropdown">
+      <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Выберите категорию товаров
+      </a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'authorization:category_list' pk=1 %}">Овощи</a></li>
+        <li><a class="dropdown-item" href="{% url 'authorization:category_list' pk=2 %}">Фрукты</a></li>
+      </ul>
+    </div>
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
   {% endif %}
         {{ form.as_p }}

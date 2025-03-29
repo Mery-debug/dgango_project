@@ -1,0 +1,41 @@
+{% extends 'authorization/base.html' %}
+
+{% block title %}Продукты из категории {{ product.category }}{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">Список товаров</h1>
+
+<ul>
+        {% for product in products %}
+        {% if product.category.name %}
+        <div class="card">
+            <div class="card-body">
+                <li class="list-group-item">
+                    Название товара:
+                    <a href="{% url 'authorization:product_detail' product.pk %}">{{ product.name }}</a>
+                </li>
+                <li class="list-group-item">Категория товара: {{ product.category }}</li>
+                <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+            </div>
+        </div>
+        {% else %}
+            {% if user.is_moderator %}
+                <div class="card">
+                    <div class="card-body">
+                        <li class="list-group-item">
+                            Название товара:
+                            <a href="{% url 'authorization:product_detail' product.pk %}">{{ product.name }}</a>
+                        </li>
+                        <li class="list-group-item">Категория товара: {{ product.category }}</li>
+                        <li class="list-group-item">Описание товара: {{ product.descriptions | truncatechars:100 }}</li>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+        {% empty %}
+        <li>Нет доступных продуктов.</li>
+        {% endfor %}
+</ul>
+{% include "authorization/floor.html" %}
+{% endblock %}

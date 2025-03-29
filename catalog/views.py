@@ -3,12 +3,14 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
 
 from config.settings import MODERATOR_GROUP
 from .forms import ProductForm, ProductModeratorForm
-from .models import Product
+from .models import Product, Category
 
 
 class CatalogHomeView(View):
@@ -40,6 +42,7 @@ class CatalogViewList(ListView):
         return Product.objects.filter(is_published=True)
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class CatalogViewDetail(DetailView):
     model = Product
     template_name = "authorization/product.html"
@@ -121,3 +124,18 @@ class CatalogDeleteView(LoginRequiredMixin, DeleteView):
             return "authorization/confirm_delete.html"
         raise PermissionDenied
 
+
+class CategoryView(ListView):
+    model = Category
+    template_name = "authorization/category.html"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "authorization:category_list", kwargs={"pk": self.object.name}
+        )
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.groups.filter(name=MODERATOR_GROUP).exists():
+            return Product.objects.all()
+        return Product.objects.filter(is_published=True)

@@ -7,7 +7,7 @@ from catalog.views import (
     CatalogDeleteView,
     CatalogUpdateView,
     CatalogViewDetail,
-    CatalogViewList,
+    CatalogViewList, CategoryView,
 )
 from spam.views import (
     SpamCreateView,
@@ -93,6 +93,11 @@ urlpatterns = [
         "spam/<int:pk>/delete/",
         SpamDeleteView.as_view(template_name="authorization/confirm_delete.html"),
         name="delete_spam",
+    ),
+    path(
+        "authorization/category_list/<str:pk>",
+        CategoryView.as_view(template_name="authorization/category.html"),
+        name="category_list",
     ),
     path("", AuthHome.as_view(), name="home"),
 ]

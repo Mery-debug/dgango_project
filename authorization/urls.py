@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from catalog.views import (
     CatalogCreateView,
@@ -81,7 +82,7 @@ urlpatterns = [
     ),
     path(
         "spam_detail/<int:pk>/",
-        SpamDetailView.as_view(template_name="authorization/content.html"),
+        cache_page(60)(SpamDetailView.as_view(template_name="authorization/content.html")),
         name="spam_detail",
     ),
     path(
@@ -97,7 +98,7 @@ urlpatterns = [
     path(
         "authorization/category_list/<int:pk>",
         CategoryView.as_view(template_name="authorization/category.html"),
-        name="category_list",
+        name="category_detail",
     ),
     path("", AuthHome.as_view(), name="home"),
 ]

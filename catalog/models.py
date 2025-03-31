@@ -37,9 +37,6 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.name} {self.price}"
 
-    @property
-    def products_in_category(self):
-        return self.objects.filter(name='category').exists()
 
     class Meta:
         verbose_name = "Товар"

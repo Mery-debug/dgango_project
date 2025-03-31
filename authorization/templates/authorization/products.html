@@ -14,8 +14,8 @@
         Выберите категорию товаров
       </a>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{% url 'authorization:category_list' pk=1 %}">Овощи</a></li>
-        <li><a class="dropdown-item" href="{% url 'authorization:category_list' pk=2 %}">Фрукты</a></li>
+        <li><a class="dropdown-item" href="{% url 'authorization:category_detail' pk=1 %}">Овощи</a></li>
+        <li><a class="dropdown-item" href="{% url 'authorization:category_detail' pk=2 %}">Фрукты</a></li>
       </ul>
     </div>
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>

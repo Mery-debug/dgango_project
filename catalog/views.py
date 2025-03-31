@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
+from executing import cache
 
 from config.settings import MODERATOR_GROUP
 from .forms import ProductForm, ProductModeratorForm
@@ -37,17 +38,20 @@ class CatalogViewList(ListView):
     success_url = reverse_lazy("authorization:product_list")
 
     def get_queryset(self):
+        queryset = cache.get('my_queryset')
         user = self.request.user
-        if user.groups.filter(name=MODERATOR_GROUP).exists():
-            return Product.objects.all()
-        return Product.objects.filter(is_published=True)
+        if not queryset:
+            queryset = super().get_queryset()
+            cache.set('my_queryset', queryset, 60 * 15)
+            if user.groups.filter(name=MODERATOR_GROUP).exists():
+                return Product.objects.all(), queryset
+            return Product.objects.filter(is_published=True), queryset
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
 class CatalogViewDetail(DetailView):
     model = Product
     template_name = "authorization/product.html"
-    success_url = reverse_lazy("product_details")
 
     def get_success_url(self):
         return reverse_lazy(
@@ -126,18 +130,23 @@ class CatalogDeleteView(LoginRequiredMixin, DeleteView):
         raise PermissionDenied
 
 
+@method_decorator(cache_page(60), name="dispatch")
 class CategoryView(LoginRequiredMixin, DetailView):
     model = Category
     template_name = "authorization/category.html"
-
-    def get_success_url(self):
-        return reverse_lazy(
-            "authorization:category_list", kwargs={"pk": self.object.id}
-        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         category_id = self.object.id
         context["category"] = CategoryProduct.category_product(category_id)
         return context
+
+    def get_category_products(self, category_id):
+        return (
+            Product.objects
+            .filter(category_id=category_id)
+            .select_related('category')
+            .prefetch_related('images')
+            .only('id', 'name', 'price', 'category__name')
+        )
 

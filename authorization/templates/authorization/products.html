@@ -8,14 +8,33 @@
 
 <ul>
   {% if user.is_moderator %}
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Выберите категорию товаров
+            </a>
+            <ul class="dropdown-menu">
+            {% for category in categories %}
+            <li>
+                <a class="dropdown-item" href="{% url 'authorization:category_detail' pk=category.pk %}">
+                    {{category.name}}
+                </a>
+            </li>
+            {% endfor %}
+            </ul>
+        </div>
   {% elif user.is_active %}
     <div class="dropdown">
       <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         Выберите категорию товаров
       </a>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{% url 'authorization:category_detail' pk=1 %}">Овощи</a></li>
-        <li><a class="dropdown-item" href="{% url 'authorization:category_detail' pk=2 %}">Фрукты</a></li>
+        {% for category in categories %}
+            <li>
+                <a class="dropdown-item" href="{% url 'authorization:category_detail' pk=category.pk %}">
+                    {{category.name}}
+                </a>
+            </li>
+        {% endfor %}
       </ul>
     </div>
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>

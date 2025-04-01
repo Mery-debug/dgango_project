@@ -1,13 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
-from executing import cache
+from django.core.cache import cache
 
 from config.settings import MODERATOR_GROUP
 from .forms import ProductForm, ProductModeratorForm
@@ -38,14 +38,22 @@ class CatalogViewList(ListView):
     success_url = reverse_lazy("authorization:product_list")
 
     def get_queryset(self):
-        queryset = cache.get('my_queryset')
         user = self.request.user
+        if user.groups.filter(name=MODERATOR_GROUP).exists():
+            return Product.objects.all()
+        queryset = cache.get('published_products')
         if not queryset:
-            queryset = super().get_queryset()
-            cache.set('my_queryset', queryset, 60 * 15)
-            if user.groups.filter(name=MODERATOR_GROUP).exists():
-                return Product.objects.all(), queryset
-            return Product.objects.filter(is_published=True), queryset
+            queryset = Product.objects.filter(is_published=True)
+            cache.set('published_products', queryset, 60 * 15)  # Кеш на 15 минут
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from .models import Category
+        context['categories'] = Category.objects.all()
+        if hasattr(self.request, 'category'):
+            context['current_category'] = self.request.category
+        return context
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
@@ -131,22 +139,24 @@ class CatalogDeleteView(LoginRequiredMixin, DeleteView):
 
 
 @method_decorator(cache_page(60), name="dispatch")
-class CategoryView(LoginRequiredMixin, DetailView):
-    model = Category
-    template_name = "authorization/category.html"
+class CategoryView(LoginRequiredMixin, ListView):
+    model = Product
+    template_name = "authorization/products.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        category_pk = self.kwargs.get('pk')
+        queryset = super().get_queryset()
+        if category_pk:
+            queryset = queryset.filter(category__pk=category_pk)
+        if not self.request.user.groups.filter(name=MODERATOR_GROUP).exists():
+            queryset = queryset.filter(is_published=True)
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category_id = self.object.id
-        context["category"] = CategoryProduct.category_product(category_id)
+        category_pk = self.kwargs.get('pk')
+        if category_pk:
+            context['current_category'] = Category.objects.get(pk=category_pk)
         return context
-
-    def get_category_products(self, category_id):
-        return (
-            Product.objects
-            .filter(category_id=category_id)
-            .select_related('category')
-            .prefetch_related('images')
-            .only('id', 'name', 'price', 'category__name')
-        )
 

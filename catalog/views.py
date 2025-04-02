@@ -49,7 +49,6 @@ class CatalogViewList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        from .models import Category
         context['categories'] = Category.objects.all()
         if hasattr(self.request, 'category'):
             context['current_category'] = self.request.category

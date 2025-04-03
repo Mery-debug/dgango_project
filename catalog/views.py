@@ -1,14 +1,18 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, View
+from django.core.cache import cache
 
 from config.settings import MODERATOR_GROUP
 from .forms import ProductForm, ProductModeratorForm
-from .models import Product
+from .models import Product, Category
+from authorization.servicies import CategoryProduct
 
 
 class CatalogHomeView(View):
@@ -37,13 +41,24 @@ class CatalogViewList(ListView):
         user = self.request.user
         if user.groups.filter(name=MODERATOR_GROUP).exists():
             return Product.objects.all()
-        return Product.objects.filter(is_published=True)
+        queryset = cache.get('published_products')
+        if not queryset:
+            queryset = Product.objects.filter(is_published=True)
+            cache.set('published_products', queryset, 60 * 15)  # Кеш на 15 минут
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        if hasattr(self.request, 'category'):
+            context['current_category'] = self.request.category
+        return context
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class CatalogViewDetail(DetailView):
     model = Product
     template_name = "authorization/product.html"
-    success_url = reverse_lazy("product_details")
 
     def get_success_url(self):
         return reverse_lazy(
@@ -120,4 +135,27 @@ class CatalogDeleteView(LoginRequiredMixin, DeleteView):
         if user == self.object.owner or user.groups.filter(name=MODERATOR_GROUP).exists():
             return "authorization/confirm_delete.html"
         raise PermissionDenied
+
+
+@method_decorator(cache_page(60), name="dispatch")
+class CategoryView(LoginRequiredMixin, ListView):
+    model = Product
+    template_name = "authorization/products.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        category_pk = self.kwargs.get('pk')
+        queryset = super().get_queryset()
+        if category_pk:
+            queryset = queryset.filter(category__pk=category_pk)
+        if not self.request.user.groups.filter(name=MODERATOR_GROUP).exists():
+            queryset = queryset.filter(is_published=True)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_pk = self.kwargs.get('pk')
+        if category_pk:
+            context['current_category'] = Category.objects.get(pk=category_pk)
+        return context
 

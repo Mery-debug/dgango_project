@@ -7,8 +7,23 @@
 <h1 class="mb-4">Список товаров</h1>
 
 <ul>
-  {% if user.is_moderator %}
-  {% elif user.is_active %}
+  {% if user.is_moderator or user.is_active %}
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Выберите категорию товаров
+            </a>
+            <ul class="dropdown-menu">
+            {% for category in categories %}
+            <li>
+                <a class="dropdown-item" href="{% url 'authorization:category_detail' pk=category.pk %}">
+                    {{category.name}}
+                </a>
+            </li>
+            {% endfor %}
+            </ul>
+        </div>
+  {% endif %}
+  {% if user.is_active and not user.is_moderator %}
     <a class="btn btn-dark" href="{% url 'authorization:product_create' %}">Добавить товар</a>
   {% endif %}
         {{ form.as_p }}

@@ -5,7 +5,7 @@ from authorization.models import Auth
 
 class Category(models.Model):
     description = models.TextField(max_length=500, verbose_name="описание")
-    name = models.CharField(max_length=150, verbose_name="наименование")
+    name = models.CharField(unique=True, max_length=150, verbose_name="наименование")
 
     def __str__(self):
         return f"{self.name} {self.description}"
@@ -36,6 +36,7 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.price}"
+
 
     class Meta:
         verbose_name = "Товар"

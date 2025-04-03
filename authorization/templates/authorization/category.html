@@ -1,0 +1,48 @@
+{% extends 'authorization/base.html' %}
+
+{% block title %}
+    {% if current_category %}
+        Продукты из категории {{ current_category.name }}
+    {% else %}
+        Все продукты
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">
+    {% if current_category %}
+        Товары из категории {{ current_category.name }}
+    {% else %}
+        Все товары
+    {% endif %}
+</h4>
+<ul>
+{% for product in products %}
+    <div class="card">
+        <div class="card-body">
+            <li class="list-group-item">
+                Название товара:
+                <a href="{% url 'authorization:product_detail' product.pk %}">
+                    {{ product.name }}
+                </a>
+                <p class="list-group-item">
+                    {{ product.descriptions|truncatechars:100 }}
+                </p>
+                <p class="list-group-item">
+                    Цена: {{ product.price }} руб.
+                </p>
+                {% if user.is_moderator %}
+                <p class="list-group-item">
+                    Опубликован: {{ product.is_published|yesno:"Да,Нет" }}
+                </p>
+                {% endif %}
+            </li>
+        </div>
+    </div>
+    {% empty %}
+    <li>Нет доступных продуктов.</li>
+    {% endfor %}
+</ul>
+
+{% include "authorization/floor.html" %}
+{% endblock %}
